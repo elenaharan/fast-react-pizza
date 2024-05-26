@@ -1,6 +1,6 @@
-import prettierPluginTailwindcss from 'prettier-plugin-tailwindcss';
+import {tailwindcss} from 'prettier-plugin-tailwindcss';
 
 export default {
-  plugins: [prettierPluginTailwindcss],
+  plugins: [tailwindcss],
   singleQuote: true,
 };
