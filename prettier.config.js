@@ -1,6 +1,6 @@
-import {tailwindcss} from 'prettier-plugin-tailwindcss';
-
-export default {
-  plugins: [tailwindcss],
-  singleQuote: true,
-};
+//eslint-disable-next-line
+module.exports = {
+  //eslint-disable-next-line
+	plugins: [require("prettier-plugin-tailwindcss")],
+	singleQuote: true,
+	}
