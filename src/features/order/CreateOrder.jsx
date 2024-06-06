@@ -22,17 +22,17 @@ function CreateOrder() {
   const isSubmitting = navigate.state === "submitting";
   const formErrors = useActionData();
   const dispatch = useDispatch();
-  const username = useSelector(store => store.user.username);
+  const {username, status: addressStatus, position, address} = useSelector(store => store.user);
   const totalCartPrice = useSelector(getTotalCartPrice);
   const priorityPrice = withPriority ? totalCartPrice * 0.2 : 0;
   const totalPrice = totalCartPrice + priorityPrice;
+  const isLoadingAddress = addressStatus === 'loading';
 
 if (!cart.length) return <EmptyCart />
 
   return (
     <div className="px-4 py-6">
       <h2 className="text-xl mb-8 font-semibold">{`Ready to order? Let's go!`}</h2>
-      <button onClick={()=> dispatch(fetchAddress())}>Get position</button>
 
       <Form method="POST">
         <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -59,7 +59,7 @@ if (!cart.length) return <EmptyCart />
           </div>
         </div>
 
-        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
+        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center relative">
           <label className="sm:basis-40">Address</label>
           <div className="grow">
             <input
@@ -67,8 +67,19 @@ if (!cart.length) return <EmptyCart />
               name="address"
               required
               className="input w-full"
+              defaultValue={address}
+              disabled={isLoadingAddress}
             />
           </div>
+          <span className="absolute right-[3px] z-50">
+            <Button type="small" onClick={(e)=> {
+              e.preventDefault();
+              dispatch(fetchAddress())
+            }}
+            disabled={isLoadingAddress}>
+              Get position
+            </Button>
+          </span>
         </div>
 
         <div className="mb-12 flex gap-5 items-center">
