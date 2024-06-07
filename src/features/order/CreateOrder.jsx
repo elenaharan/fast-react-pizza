@@ -22,7 +22,7 @@ function CreateOrder() {
   const isSubmitting = navigate.state === "submitting";
   const formErrors = useActionData();
   const dispatch = useDispatch();
-  const {username, status: addressStatus, position, address} = useSelector(store => store.user);
+  const {username, status: addressStatus, position, address, error: errorAddress} = useSelector(store => store.user);
   const totalCartPrice = useSelector(getTotalCartPrice);
   const priorityPrice = withPriority ? totalCartPrice * 0.2 : 0;
   const totalPrice = totalCartPrice + priorityPrice;
@@ -70,16 +70,17 @@ if (!cart.length) return <EmptyCart />
               defaultValue={address}
               disabled={isLoadingAddress}
             />
+            {addressStatus === 'error' && <p className="mt-2 rounded-md bg-red-100 p-2 text-xs text-red-700">{errorAddress}</p>}
           </div>
-          <span className="absolute right-[3px] z-50">
+          {!position.latitude && !position.longitude && <span className="absolute top-[3px] right-[3px] md:top-[5px] md:right-[5px] z-50">
             <Button type="small" onClick={(e)=> {
               e.preventDefault();
               dispatch(fetchAddress())
-            }}
-            disabled={isLoadingAddress}>
+              }}
+              disabled={isLoadingAddress}>
               Get position
             </Button>
-          </span>
+          </span>}
         </div>
 
         <div className="mb-12 flex gap-5 items-center">
@@ -100,7 +101,12 @@ if (!cart.length) return <EmptyCart />
             name="cart"
             value={JSON.stringify(cart)}
           />
-          <Button disabled={isSubmitting} type="primary">
+          <input 
+          type="hidden"
+          name="position"
+          value={position.longitude && position.latitude ? `${position.longitude}, ${position.latitude}` : ''}
+          />
+          <Button disabled={isSubmitting || isLoadingAddress} type="primary">
             {isSubmitting ? "Placing order..." : `Order now for ${formatCurrency(totalPrice)}`}
           </Button>
         </div>
